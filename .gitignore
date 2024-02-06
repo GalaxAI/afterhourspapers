@@ -160,3 +160,7 @@ cython_debug/
 #.idea/
 
 *.txt
+wandb/
+.vscode/
+*.pth
+*.pickle
