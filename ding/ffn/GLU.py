@@ -14,6 +14,7 @@ class Config:
     n_heads: int = 6
     n_layers: int = 6
     ffn_bias: bool = True
+    ffn_activ: nn.Module = nn.ReLU()
 
 class GLU(nn.Module):
     def __init__(self, model_args: Config):
@@ -21,7 +22,7 @@ class GLU(nn.Module):
         self.l1 = nn.Linear(model_args.n_embd, model_args.n_embd * 4, bias = model_args.ffn_bias)
         self.l2 = nn.Linear(model_args.n_embd, model_args.n_embd * 4, bias = model_args.ffn_bias)
         self.l3 = nn.Linear(model_args.n_embd * 4, model_args.n_embd, bias = model_args.ffn_bias)
-        self.activation = nn.Sigmoid()
+        self.activation = model_args.ffn_activ or nn.Sigmoid() 
         self.dropout = nn.Dropout(model_args.dropout)
 
 
