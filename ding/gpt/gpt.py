@@ -14,6 +14,7 @@ class Config:
     dropout: float = 0.2
     n_heads: int = 6
     n_layers: int = 6
+    ffn_bias: bool = True
 
 
 class GPT(nn.Module):
@@ -131,9 +132,9 @@ class FeedForwardNetwork(nn.Module):
     def __init__(self, model_args: Config):
         super().__init__()
         self.ffn = nn.Sequential(
-            nn.Linear(model_args.n_embd, model_args.n_embd * 4),
+            nn.Linear(model_args.n_embd, model_args.n_embd * 4, bias = model_args.ffn_bias),
             nn.GELU(),
-            nn.Linear(model_args.n_embd * 4, model_args.n_embd),
+            nn.Linear(model_args.n_embd * 4, model_args.n_embd, bias = model_args.ffn_bias),
             nn.Dropout(model_args.dropout)
         )
 

@@ -7,6 +7,7 @@ import wandb
 
 torch.set_printoptions(precision=4, linewidth=140, sci_mode=False)
 
+
 with open('ding/gpt/input.txt', 'r', encoding='utf-8') as f:
     text = f.read()
 
@@ -50,6 +51,7 @@ class Config:
     dropout: float = 0.2
     n_heads: int = 6
     n_layers: int = 6
+    ffn_bias: bool = True
 
 
 xb, yb = get_batch('train')
@@ -223,7 +225,7 @@ print(sum(p.numel() for p in m.parameters()) / 1e6, 'M parameters')
 optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4)
 
 # Initialize wandb
-wandb.init(project="Attention-from-scratch", name="gpt")
+wandb.init(project="Attention-from-scratch", name="gpt-rocm-6")
 
 max_iters = 5000
 eval_interval = 100
