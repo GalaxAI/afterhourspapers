@@ -2,6 +2,8 @@
 
 GLU - > https://arxiv.org/abs/2002.05202v1
 
+![alt text](glu.png)
+
 
 
 ### Explanations from paper
