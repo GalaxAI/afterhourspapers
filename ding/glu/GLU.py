@@ -28,7 +28,7 @@ class GLU(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         
-        a = self.sigmoid(self.l1(x))
+        a = self.activation(self.l1(x))
         b = self.l2(x)
         
         x = torch.mul(a , b)

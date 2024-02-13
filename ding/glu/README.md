@@ -4,6 +4,7 @@ GLU - > https://arxiv.org/abs/2002.05202v1
 
 ![alt text](glu.png)
 
+- [wandb](https://wandb.ai/afterhoursbilly/Attention-from-scratch) training log
 
 
 ### Explanations from paper
