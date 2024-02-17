@@ -164,3 +164,5 @@ wandb/
 .vscode/
 *.pth
 *.pickle
+results/
+models/
