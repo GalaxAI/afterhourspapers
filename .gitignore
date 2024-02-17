@@ -165,3 +165,4 @@ wandb/
 *.pth
 *.pickle
 results/
+models/
