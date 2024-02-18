@@ -1,4 +1,6 @@
-from transformers import GPT2Tokenizer, GPT2Model, GPT2LMHeadModel, Trainer, TrainingArguments, GPT2Config
+from transformers import GPT2Tokenizer, GPT2Model, GPT2LMHeadModel, Trainer, TrainingArguments, GPT2Config, DataCollator
+from datasets import load_dataset
+from sacrebleu.metrics import BLEU
 import torch
 from torch import nn
 import os
@@ -9,19 +11,11 @@ os.environ['WANDB_PROJECT'] = 'lora'
 config = GPT2Config.from_pretrained('gpt2-medium', attention_probs_dropout_prob=0.1, hidden_dropout_prob=0.1)
 tokenizer = GPT2Tokenizer.from_pretrained('gpt2-medium')
 model = GPT2LMHeadModel.from_pretrained('gpt2-medium', config=config).to('cuda')
-text = "Replace me by any text you'd like."
-encoded_input = tokenizer(text, return_tensors='pt').to('cuda')
+
 
 r = 4
 alpha = 32
-k,d = model.transformer.h[0].attn.c_attn.weight.shape
-## Beggining of the LORA CODE
 
-## CREATE
-B = torch.zeros((d,r))# torch.zero like // d x r
-A = torch.normal(mean=0, std=1, size=(r, k)) # N(0,sigma^2) # torch rand like // r x k
-print(B@A)
-# iterate over the layers and freeze the weights
 for param in model.parameters():
     param.requires_grad = False
 
@@ -67,41 +61,27 @@ w = []
 for i in range(r//2):
     model.transformer.h[23-i].attn.c_attn = LoraGPT2(model.transformer.h[23-i].attn.c_attn, r, alpha)
     model.transformer.h[23-i].attn.c_proj = LoraGPT2(model.transformer.h[23-i].attn.c_proj, r, alpha)
-    w.append([model.transformer.h[23-i].attn.c_attn.A, model.transformer.h[23-i].attn.c_attn.B, model.transformer.h[23-i].attn.c_proj.A, model.transformer.h[23-i].attn.c_proj.B])
-
 ## TIME TO TRAIN
 
-# load in the data for E2E NLG Challenge
-with open('ding/lora/data/train.txt', encoding='utf-8') as f:
-    train = f.read().split(' \n')
-with open('ding/lora/data/valid.txt', encoding='utf-8') as f:
-    valid = f.read().split(' \n')
-tokenizer.pad_token = tokenizer.eos_token 
-train_encodings = tokenizer(train, truncation=True, padding=True, max_length=512,return_tensors='pt')
-val_encodings = tokenizer(valid, truncation=True, padding=True, max_length=512,return_tensors='pt')
+train,valid = load_dataset("e2e_nlg",split=['train','validation'])
+tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+model.resize_token_embeddings(len(tokenizer))
 
-class GPT2Dataset(torch.utils.data.Dataset):
-    def __init__(self, encodings):
-        self.encodings = encodings
+def preprocess_and_tokenize(a):
+    # Combine the input and output texts
+    combined_texts = a['meaning_representation'] + '||' + a['human_reference']
+    # Tokenize the combined texts
+    return tokenizer(combined_texts, max_length=128, truncation=True, padding="max_length", return_tensors="pt")
 
-    def __len__(self):
-        return len(self.encodings['input_ids'])
+# Apply preprocessing and tokenization to the train and validation datasets
+tokenized_train = train.map(preprocess_and_tokenize)
+tokenized_valid = valid.map(preprocess_and_tokenize)
 
-    def __getitem__(self, idx):
-        # Ensure that 'labels' are included and set to the input_ids for language modeling tasks
-        item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
-        item['labels'] = item['input_ids'].clone()  # Duplicate input_ids to labels for autoregressive language modeling
-        return item
+# Assuming `tokenized_datasets` is your dataset prepared for training
+tokenized_train = tokenized_train.map(lambda examples: {'labels': examples['input_ids']}, batched=True)
+# Assuming `tokenized_datasets` is your dataset prepared for training
+tokenized_valid = tokenized_valid.map(lambda examples: {'labels': examples['input_ids']}, batched=True)
 
-
-
-train_dataset = GPT2Dataset(train_encodings)
-val_dataset = GPT2Dataset(val_encodings)
-
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=8, shuffle=True)
-val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=8, shuffle=False)
-
-from transformers import Trainer, TrainingArguments
 
 training_args = TrainingArguments(
     output_dir='./results',
@@ -122,10 +102,11 @@ training_args = TrainingArguments(
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=train_dataset,
-    eval_dataset=val_dataset,
-    tokenizer=tokenizer,
+    train_dataset=tokenized_train,
+    eval_dataset=tokenized_valid,
 )
 
 trainer.train()
-trainer.save_model('ding/lora/models/')
+
+trainer.save_model('ding/lora/models/lora_v2')
+trainer.evaluate()
