@@ -27,6 +27,7 @@ class LoraLinear(nn.Linear,Lora):
                  lora_alpha:int = 1,
                  lora_dropout:float = 0.0,
                  merge_weights:bool = True,
+                 fan_in_fan_out:bool = False, # Set this to True if the layer to replace stores weight like (fan_in, fan_out)
                  **kwargs):
         
         nn.Linear.__init__(self, in_f, out_f,**kwargs)
@@ -36,16 +37,24 @@ class LoraLinear(nn.Linear,Lora):
         self.B = nn.Parameter(self.weight.new_zeros((out_f,r)))
         self.scale = r/lora_alpha
 
+
+        self.fan_in_fan_out = fan_in_fan_out
         # We are reseting the parameters for linear since we load in the weights later
         nn.Linear.reset_parameters(self)
+        self.weight.requires_grad = False
         nn.init.kaiming_uniform_(self.A)
         nn.init.zeros_(self.B)
-    
+        if self.fan_in_fan_out:
+            self.weight.data = self.weight.data.transpose(0, 1)
+
+
     def forward(self, x):
+            def T(w):
+                return w.transpose(0,1) if self.fan_in_fan_out else w
             x = self.lora_dropout(x)
     
             # Calculate the adapted weights
-            adapted_weights = self.weight + self.B @ self.A
+            adapted_weights = self.weight + T(self.B @ self.A * self.scale)
             
             # Perform the linear operation with adapted weights
             return nn.functional.linear(x, adapted_weights, self.bias)

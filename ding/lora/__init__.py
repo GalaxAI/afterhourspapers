@@ -1,1 +1,1 @@
-from LoRA import Lora, LoraGPT2
+from LoRA import Lora
