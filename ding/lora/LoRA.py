@@ -42,8 +42,13 @@ class LoraLinear(nn.Linear,Lora):
         nn.init.zeros_(self.B)
     
     def forward(self, x):
-        x = self.weight + self.B @ self.A
-        return nn.functional.linear(x, self.weight, self.bias)   
+            x = self.lora_dropout(x)
+    
+            # Calculate the adapted weights
+            adapted_weights = self.weight + self.B @ self.A
+            
+            # Perform the linear operation with adapted weights
+            return nn.functional.linear(x, adapted_weights, self.bias)
 
 class LoraEmbedding(Lora, nn.Module):
     pass
