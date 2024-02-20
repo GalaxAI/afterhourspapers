@@ -166,3 +166,5 @@ wandb/
 *.pickle
 results/
 models/
+*.jsonl
+data/
