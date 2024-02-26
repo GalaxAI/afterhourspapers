@@ -19,3 +19,4 @@
 
 ### Coming later, maybe...
 QLORA - https://arxiv.org/abs/2305.14314e
+LORA+ - https://arxiv.org/abs/2402.12354
