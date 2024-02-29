@@ -63,3 +63,40 @@ class LoraEmbedding(Lora, nn.Module):
     pass
 
 # Can extend to the other layers the idea is the same.
+
+def create_loraplus_optim(
+        model: nn.Module,
+        optim_cls: torch.optim, # for examples torch.optim.Adam
+        optim_params: dict, # for examples {'lr': 0.001, 'weight_decay': 0.01}
+        loraplus_ratio: float = 16
+    ):
+    
+    param_group ={
+    'A': {},
+    'B': {}
+    }
+
+    for name, param in model.named_parameters():
+        if not param.requires_grad:
+            continue
+        
+        if 'A' in name:
+            param_group['A'][name] = param
+        elif 'B' in name: # cant be else since we would insert all the other parameters and bias
+            param_group['B'][name] = param
+    
+    lr = optim_params.get('lr')
+    wd = optim_params.get('weight_decay', 0.)
+    
+    optimizer_grouped_parameters = [
+    {
+        "params": list(param_group.get("A").values()),
+        "weight_decay": wd,
+        "lr": lr,
+    },
+    {
+        "params": list(param_group.get("B").values()),
+        "weight_decay": wd,
+        "lr": lr * loraplus_ratio,
+    }]
+    return optim_cls(optimizer_grouped_parameters, lr=lr)
