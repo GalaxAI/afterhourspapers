@@ -3,7 +3,7 @@
 ## [LORA](https://arxiv.org/abs/2106.09685)
 [code](./LoRA.py)
 
-[LORA](https://wandb.ai/afterhoursbilly/lora/runs/) fine-training log
+[LORA](https://wandb.ai/afterhoursbilly/lora/runs/) fine-training log \
 ![alt_text](images/LoRA.png)
 
 #### evals 
@@ -19,7 +19,7 @@
 ## [LoRA+](https://arxiv.org/abs/2402.12354)
 
 The paper has a lot of math that can be skipped. The whole idea is that we scale the learning rate differently for the A and B matrices.\
-The paper proposes the scale to be ($\mu_{b} \div \mu_{a} ) =  2^4 $.
+The paper proposes the scale to be ($\eta_{b} \div \eta_{a} ) =  2^4 $.
 
 
 ### Coming later, maybe...
