@@ -20,6 +20,7 @@
 
 The paper has a lot of math that can be skipped. The whole idea is that we scale the learning rate differently for the A and B matrices.\
 The paper proposes the scale to be ($\eta_{b} \div \eta_{a} ) =  2^4 $.
+It results in 2x faster convergence and sometimes in extra performance.
 
 
 ### Coming later, maybe...
