@@ -1,4 +1,4 @@
-# afterhourspapers
+# afterhours-Papers
 This is a collection of implementations of ML/AI papers in PyTorch.
 
 > There will be a similar repository for tinygrad WIP. 
