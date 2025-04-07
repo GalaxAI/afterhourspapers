@@ -4,4 +4,4 @@ Learning rate scheduler is a technique used to adjust the learning rate during t
 
 ## Example.ipynb
 
-To see how learning rate schedulers work, you can look inside  noteboo called [`examples.ipynb`](./examples.ipynb) 
+To see how learning rate schedulers work, you can look inside  noteboo called [`examples.ipynb`](./examples.ipynb)

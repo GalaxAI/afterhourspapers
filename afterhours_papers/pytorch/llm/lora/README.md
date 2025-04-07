@@ -6,14 +6,14 @@
 [LORA](https://wandb.ai/afterhoursbilly/lora/runs/) fine-training log \
 ![alt_text](images/LoRA.png)
 
-#### evals 
+#### evals
 >Coming soon.
 
 ### Confusions about LoRA paper
-> Heads up, I only trained GPT2-medium for implementation. 
+> Heads up, I only trained GPT2-medium for implementation.
 
-- I had a lot of confusion about the shapes of the A & B Matrix. 
-- I was also shocked to see that GPT2-medium didn't use `q,k,v` for the attention mechanism, but instead used Conv1D, which was a bit confusing to me at first. 
+- I had a lot of confusion about the shapes of the A & B Matrix.
+- I was also shocked to see that GPT2-medium didn't use `q,k,v` for the attention mechanism, but instead used Conv1D, which was a bit confusing to me at first.
 - $(W_{o}x + BAx)$. Is not `linear(x) + B@A@x` but `linear(linear.weight + B@A)` , Which confused me for about 3 days. (I skip scale and bias here for simplicity.)
 
 ## [LoRA+](https://arxiv.org/abs/2402.12354)
