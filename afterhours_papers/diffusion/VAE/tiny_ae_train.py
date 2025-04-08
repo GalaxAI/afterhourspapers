@@ -56,7 +56,8 @@ class Decoder:
         self.linear = nn.Linear(16, 1024 * 4 * 4)
         self.t_conv1 = conv_transpose_block(1024, 512)
         self.t_conv2 = conv_transpose_block(512, 256, output_padding=1)
-        self.t_conv3 = conv_transpose_block(256, out_channels, output_padding=1)
+        self.t_conv3 = conv_transpose_block(256, out_channels, output_padding=1, with_act=False)
+        # No normalization on last t_conv and no relu as well so we can pass values to sigmoid
 
     def __call__(self, x: Tensor) -> Tensor:
         bs = x.shape[0]
@@ -65,7 +66,7 @@ class Decoder:
         x = self.t_conv1(x)  # (bs, 512, 7, 7)
         x = self.t_conv2(x)  # (bs, 256, 14, 14)
         x = self.t_conv3(x)  # (bs, out_channels, 28, 28)
-        return x
+        return x.sigmoid()
 
 
 class AutoEncoder:
@@ -116,8 +117,7 @@ if __name__ == "__main__":
     # Modified training loop to use trange
     for step in (t := trange(epochs * step_size)):
         GlobalCounters.reset()
-        # samples = Tensor.arange(batch_size := BATCH_SIZE * (i := step % step_size),
-        #                        batch_size + BATCH_SIZE)
         loss = train_step()
-        losses.append(loss)
-        t.set_description(f"loss: {loss.item():6.4f}")
+        loss_item = loss.item()
+        losses.append(loss_item)
+        t.set_description(f"loss: {loss_item:6.4f}")

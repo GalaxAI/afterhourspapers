@@ -8,7 +8,6 @@ models/
 *.jsonl
 data/
 *.lock
-*.ipynb
 
 
 # Byte-compiled / optimized / DLL files

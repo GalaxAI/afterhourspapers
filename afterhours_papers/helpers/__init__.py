@@ -1,4 +1,4 @@
 from afterhours_papers.helpers.datasets import StepDataLoader, def_device
-from afterhours_papers.helpers.tiny_plot import show_image
+from afterhours_papers.helpers.tiny_plot import show_image, show_images
 
-__all__ = ["StepDataLoader", "def_device", "show_image"]
+__all__ = ["StepDataLoader", "def_device", "show_image", "show_images"]

@@ -54,7 +54,7 @@ class Decoder(nn.Module):
         self.linear = nn.Linear(16, 1024 * 4 * 4)
         self.t_conv1 = conv_transpose_block(1024, 512)
         self.t_conv2 = conv_transpose_block(512, 256, output_padding=1)
-        self.t_conv3 = conv_transpose_block(256, out_channels, output_padding=1)
+        self.t_conv3 = conv_transpose_block(256, out_channels, output_padding=1, with_act=False)  # No norm or relu in last t_conv
 
     def forward(self, x: Tensor) -> Tensor:
         bs = x.shape[0]
