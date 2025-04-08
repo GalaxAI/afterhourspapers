@@ -95,7 +95,7 @@ if __name__ == "__main__":
     def mean_squared_error(self, Y: Tensor, reduction: str = "mean") -> Tensor:
         return self.sub(Y).pow(2)._do_reduction(reduction)
 
-    Tensor.mean_squared_error = mean_squared_error
+    Tensor.mean_squared_error = mean_squared_error  # type: ignore
 
     @Tensor.train()
     @TinyJit
