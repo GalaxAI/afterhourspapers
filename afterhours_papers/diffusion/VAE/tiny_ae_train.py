@@ -93,11 +93,6 @@ if __name__ == "__main__":
 
     losses = []
 
-    def mean_squared_error(self, Y: Tensor, reduction: str = "mean") -> Tensor:
-        return self.sub(Y).pow(2)._do_reduction(reduction)
-
-    Tensor.mean_squared_error = mean_squared_error  # type: ignore
-
     @Tensor.train()
     @TinyJit
     def train_step():
@@ -105,7 +100,7 @@ if __name__ == "__main__":
         samples = Tensor.randint(BATCH_SIZE, high=X_train.shape[0])
         X = X_train[samples]
         preds = model(X)
-        loss = preds.mean_squared_error(X)
+        loss = preds.binary_crossentropy(X)
         loss.backward()
         optim.step()
         return loss.realize()
