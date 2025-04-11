@@ -1,5 +1,6 @@
 import math
 from itertools import zip_longest
+from typing import Any, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,9 +31,9 @@ def show_image(im, ax=None, figsize=None, title=None, noframe=True, **kwargs):
 def subplots(
     nrows: int = 1,  # Number of rows in returned axes grid
     ncols: int = 1,  # Number of columns in returned axes grid
-    figsize: tuple = None,  # Width, height in inches of the returned figure
+    figsize: Optional[tuple[Any, ...]] = None,  # Width, height in inches of the returned figure
     imsize: int = 3,  # Size (in inches) of images that will be displayed in the returned figure
-    suptitle: str = None,  # Title to be set to returned figure
+    suptitle: Optional[str] = None,  # Title to be set to returned figure
     **kwargs,
 ):  # fig and axs
     "A figure and set of subplots to display images of `imsize` inches"
@@ -48,9 +49,9 @@ def subplots(
 
 def get_grid(
     n: int,  # Number of axes
-    nrows: int = None,  # Number of rows, defaulting to `int(math.sqrt(n))`
-    ncols: int = None,  # Number of columns, defaulting to `ceil(n/rows)`
-    title: str = None,  # If passed, title set to the figure
+    nrows: Optional[int] = None,  # Number of rows, defaulting to `int(math.sqrt(n))`
+    ncols: Optional[int] = None,  # Number of columns, defaulting to `ceil(n/rows)`
+    title: Optional[str] = None,  # If passed, title set to the figure
     weight: str = "bold",  # Title font weight
     size: int = 14,  # Title font size
     **kwargs,
@@ -73,9 +74,9 @@ def get_grid(
 
 def show_images(
     ims: list,  # Images to show
-    nrows: int | None = None,  # Number of rows in grid
-    ncols: int | None = None,  # Number of columns in grid (auto-calculated if None)
-    titles: list | None = None,  # Optional list of titles for each image
+    nrows: Optional[int] = None,  # Number of rows in grid
+    ncols: Optional[int] = None,  # Number of columns in grid (auto-calculated if None)
+    titles: Optional[list] = None,  # Optional list of titles for each image
     **kwargs,
 ):
     "Show all images `ims` as subplots with `rows` using `titles`"
