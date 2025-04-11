@@ -8,6 +8,7 @@ models/
 *.jsonl
 data/
 *.lock
+*.safetensors
 
 
 # Byte-compiled / optimized / DLL files
