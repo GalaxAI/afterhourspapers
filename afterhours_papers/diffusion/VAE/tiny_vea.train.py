@@ -5,6 +5,8 @@ from tinygrad.helpers import Context, trange
 from tinygrad.nn.datasets import mnist
 from tinygrad.nn.state import get_state_dict, safe_save
 
+import wandb
+
 print(f"Default device: {Device.DEFAULT}")
 X_train, Y_train, X_test, Y_test = mnist()
 X_train = X_train.div(255.0)
@@ -101,11 +103,16 @@ class VAE:
 
 
 if __name__ == "__main__":
-    dims = 2
+    wandb_run = wandb.init(
+        project="HandsOnGENAI - VAE",
+        name="tiny-vae",
+        config={"dims": 2, "batch_size": 64, "epochs": 10, "lr": 1e-4, "loss_fn": "binary_crossentropy"},
+    )
+    dims = wandb_run.config["dims"]
     model = VAE(1, dims)
-    batch_size = 64
-    epochs = 10
-    lr = 1e-4
+    batch_size = wandb_run.config["batch_size"]
+    epochs = wandb_run.config["epochs"]
+    lr = wandb_run.config["lr"]
     optim = nn.optim.AdamW(nn.state.get_parameters(model), lr=lr, eps=1e-5)
 
     def KLDLoss(mu: Tensor, logvar: Tensor) -> Tensor:
@@ -153,9 +160,11 @@ if __name__ == "__main__":
             kl_loss_item = kl_loss.item()
 
             t.set_description(f"loss: {loss_item:6.4f}, img_loss: {img_loss_item:6.4f}, kl_loss: {kl_loss_item:6.4f}")
+            wandb_run.log({"loss": loss_item, "img_loss": img_loss_item, "kl_loss": kl_loss_item})
 
     # first we need the state dict of our model
     state_dict = get_state_dict(model)
 
     # then we can just save it to a file
     safe_save(state_dict, "models/vae.safetensors")
+    wandb_run.finish()
