@@ -7,7 +7,6 @@ results/
 models/
 *.jsonl
 data/
-*.lock
 *.safetensors
 
 
