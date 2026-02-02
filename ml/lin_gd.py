@@ -28,12 +28,18 @@ def linear_regression_gradient_descent_tg(X, y, alpha, iterations) -> Tensor:
 
 if __name__ == "__main__":
     res = linear_regression_gradient_descent_tg(X=np.array([[1, 1], [1, 2], [1, 3]]), y=np.array([3, 5, 7]), alpha=0.1, iterations=1000)
+    expected = np.array([[1.0], [2.0]])
+    assert np.allclose(res.numpy(), expected), f"expected {expected.tolist()} got {res.numpy().tolist()}"
     print(res.numpy().tolist())
 
     res = linear_regression_gradient_descent_tg([[1.0, 0.0], [0.0, 1.0]], [5.0, 3.0], 0.1, 1000)
+    expected = np.array([[5.0], [3.0]])
+    assert np.allclose(res.numpy(), expected), f"expected {expected.tolist()} got {res.numpy().tolist()}"
     print(res.numpy().tolist())
 
     X = [[1.0, 1.0], [1.0, 2.0], [1.0, 3.0]]
     y = [1.0, 2.0, 3.0]
     res = linear_regression_gradient_descent_tg(X, y, 0.01, 1000)
+    expected = np.array([[0.0], [1.0]])
+    assert np.allclose(res.numpy(), expected), f"expected {expected.tolist()} got {res.numpy().tolist()}"
     print(res.numpy().tolist())
