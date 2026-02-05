@@ -3,8 +3,62 @@ name = "afterhours_papers"
 version = "0.1.0"
 description = "Scientific paper implementations as well as other ML concepts"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
-    "numpy>=2.4.1",
-    "tinygrad>=0.12.0",
+    "datasets>=4.5.0",
 ]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = []
+py-modules = ["loader", "learner", "helpers"]
+
+[tool.ruff]
+line-length = 150
+[tool.ruff.lint]
+ignore = ["E701"]
+
+[project.optional-dependencies]
+cpu = [
+    "torch>=2.10.0",
+    "torchvision>=0.25.0",
+]
+rocm = [
+    "torch>=2.10.0",
+    "torchvision>=0.25.0",
+    "triton-rocm==3.6.0",
+]
+
+[tool.uv]
+conflicts = [
+  [
+    { extra = "cpu" },
+    { extra = "rocm" },
+  ],
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", extra = "cpu" },
+  { index = "pytorch-rocm", extra = "rocm" },
+]
+torchvision = [
+  { index = "pytorch-cpu", extra = "cpu" },
+  { index = "pytorch-rocm", extra = "rocm" },
+]
+triton-rocm = [
+  { index = "pytorch-rocm", extra = "rocm" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-rocm"
+url = "https://download.pytorch.org/whl/rocm7.1"
+explicit = true
